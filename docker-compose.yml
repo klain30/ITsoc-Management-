@@ -1,0 +1,24 @@
+# Local development database. Run `docker compose up -d` from the repo root.
+# For the full containerised stack (db + api + web) use docker-compose.prod.yml.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: itsoc-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: itsoc_management
+      POSTGRES_USER: itsoc
+      POSTGRES_PASSWORD: itsoc_dev_password
+    ports:
+      # 5433 on the host so it does not clash with a locally installed PostgreSQL.
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U itsoc -d itsoc_management"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

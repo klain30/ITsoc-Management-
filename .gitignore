@@ -1,0 +1,22 @@
+# Dependencies & builds
+node_modules/
+dist/
+coverage/
+
+# Environment — never commit real secrets
+.env
+.env.*
+!.env.example
+# Test-only settings (no real secrets) are committed so CI and new clones work
+!backend/.env.test
+
+# Uploaded files (receipts, documents, avatars)
+backend/uploads/
+backend/uploads-test/
+
+# Superseded scaffold kept temporarily for reference; delete when no longer needed
+legacy/
+
+.DS_Store
+*.log
+npm-debug.log*
