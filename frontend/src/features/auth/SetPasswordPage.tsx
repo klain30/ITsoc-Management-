@@ -77,7 +77,7 @@ export default function SetPasswordPage() {
 
   return (
     <AuthLayout>
-      <h1 className="text-2xl font-semibold tracking-tight">{invitation ? `Welcome, ${preview.data.firstName}!` : 'Reset your password'}</h1>
+      <h1 className="font-display text-2xl font-bold tracking-tight">{invitation ? `Welcome, ${preview.data.firstName}!` : 'Reset your password'}</h1>
       <p className="mt-1 text-sm text-fg-muted">
         {invitation ? 'Set a password to activate your account' : 'Choose a new password for'} <strong className="text-fg">{preview.data.email}</strong>.
       </p>

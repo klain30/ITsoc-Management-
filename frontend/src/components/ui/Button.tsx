@@ -23,7 +23,9 @@ const SIZES: Record<Size, string> = {
 // eslint-disable-next-line react/only-export-components -- shared style helper
 export const buttonClasses = (variant: Variant = 'primary', size: Size = 'md', className?: string) =>
   cn(
-    'inline-flex shrink-0 items-center justify-center rounded-lg font-medium whitespace-nowrap transition-colors',
+    'inline-flex shrink-0 items-center justify-center rounded-lg font-medium whitespace-nowrap',
+    // Press feedback: a quick 0.97 squeeze so every button feels like it heard the click.
+    'transition-[background-color,color,box-shadow,opacity,transform] duration-150 ease-snappy active:scale-[0.97]',
     'disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2',
     VARIANTS[variant],
     SIZES[size],
@@ -66,7 +68,7 @@ export function IconButton({
       aria-label={label}
       title={label}
       className={cn(
-        'inline-flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted transition-colors hover:bg-muted hover:text-fg disabled:opacity-50',
+        'inline-flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted transition-[background-color,color,transform] duration-150 ease-snappy hover:bg-muted hover:text-fg active:scale-[0.94] disabled:opacity-50',
         className,
       )}
       {...props}

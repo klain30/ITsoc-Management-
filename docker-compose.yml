@@ -10,8 +10,8 @@ services:
       POSTGRES_USER: itsoc
       POSTGRES_PASSWORD: itsoc_dev_password
     ports:
-      # 5433 on the host so it does not clash with a locally installed PostgreSQL.
-      - "5433:5432"
+      # 5434 on the host so it does not clash with a local PostgreSQL (5432) or another project's container on 5433.
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

@@ -25,7 +25,7 @@ jobs:
           POSTGRES_PASSWORD: itsoc_dev_password
           POSTGRES_DB: itsoc_test
         ports:
-          - 5433:5432
+          - 5434:5432
         options: >-
           --health-cmd "pg_isready -U itsoc -d itsoc_test"
           --health-interval 5s --health-timeout 5s --health-retries 10

@@ -38,7 +38,7 @@ A web platform that runs the day-to-day operations of a university student organ
 Prerequisites: Node.js 20+ and Docker Desktop.
 
 ```bash
-# 1. Database (PostgreSQL on host port 5433)
+# 1. Database (PostgreSQL on host port 5434)
 docker compose up -d
 
 # 2. Backend

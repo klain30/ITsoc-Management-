@@ -27,12 +27,16 @@ export function StatTile({
   className?: string;
 }) {
   return (
-    <div className={cn('rounded-xl border border-border bg-surface p-4 shadow-card sm:p-5', className)}>
+    <div className={cn('relative overflow-hidden rounded-xl border border-border bg-surface p-4 shadow-card sm:p-5', className)}>
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm text-fg-muted">{label}</p>
-        {Icon ? <Icon size={18} className="text-fg-subtle" aria-hidden /> : null}
+        {Icon ? (
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
+            <Icon size={18} aria-hidden />
+          </span>
+        ) : null}
       </div>
-      <p className="mt-2 text-2xl font-semibold tracking-tight text-fg">{value}</p>
+      <p className="mt-1 font-display text-2xl font-bold tracking-tight text-fg tabular">{value}</p>
       {hint ? <p className="mt-1 text-xs text-fg-subtle">{hint}</p> : null}
     </div>
   );
@@ -69,7 +73,7 @@ export function Meter({
       className={cn('h-2 w-full overflow-hidden rounded-full bg-chart-track', className)}
       title={`${label}: ${value}%`}
     >
-      <div className={cn('h-full rounded-full transition-[width]', fill)} style={{ width: `${clamped}%` }} />
+      <div className={cn('h-full origin-left animate-grow-x rounded-full transition-[width]', fill)} style={{ width: `${clamped}%` }} />
     </div>
   );
 }
@@ -97,7 +101,7 @@ export function BarList({ data, max, className, emptyLabel = 'No data yet' }: { 
             </div>
             <div className="relative h-2.5 w-full">
               <div
-                className="h-full rounded-r-[4px] bg-chart transition-opacity group-hover:opacity-80"
+                className="h-full origin-left animate-grow-x rounded-r-[4px] bg-chart transition-opacity group-hover:opacity-80"
                 style={{ width: `${width}%`, minWidth: datum.value > 0 ? 3 : 0 }}
                 title={`${typeof datum.label === 'string' ? datum.label : ''} ${datum.display}`.trim()}
               />
@@ -132,7 +136,7 @@ export function ColumnChart({ data, height = 160, className }: { data: ColumnDat
             <div key={datum.key} className="group relative flex h-full flex-1 flex-col items-center justify-end">
               {index === last ? <span className="mb-1 text-xs font-medium text-fg tabular">{datum.display}</span> : null}
               <div
-                className="w-full max-w-6 rounded-t-[4px] bg-chart transition-opacity group-hover:opacity-80"
+                className="w-full max-w-6 origin-bottom animate-grow-y rounded-t-[4px] bg-chart transition-opacity group-hover:opacity-80"
                 style={{ height: h }}
               />
               <div className="pointer-events-none absolute bottom-full z-10 mb-1 hidden rounded-md border border-border bg-surface px-2 py-1 text-xs whitespace-nowrap text-fg shadow-pop group-hover:block">

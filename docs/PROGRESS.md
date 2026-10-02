@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 2026-09-29. **Status: complete.**
+Last updated: 2026-10-03. **Status: complete.**
 
 ## What was built
 
@@ -10,6 +10,7 @@ Last updated: 2026-09-29. **Status: complete.**
 | API | Every module in the spec, plus roles, organization settings, and an event-reminder job. See [api.md](api.md). |
 | Frontend | React SPA covering sign-in, invitations, the dashboard, events and registration, QR check-in with a projector view, certificates and public verification, members, officers, finance, documents, announcements, notifications, reports, the audit log, profile, and settings. Supports light and dark mode and is responsive. |
 | Delivery | Docker images for the API and web (nginx), `docker-compose.prod.yml`, and GitHub Actions CI |
+| Branding (2026-10-03) | ITSoc seal and cover photo (`frontend/public/itsoc-*.png`), palette taken from the seal (tokens in `frontend/src/index.css`), Montserrat for titles, circuit-trace graphic (`CircuitPattern`), branded dashboard banner, and CSS-only motion: button press, popover/dialog/toast entry, page fade, staggered cards, growing chart bars. All motion respects `prefers-reduced-motion`. |
 
 ## Verification record
 
@@ -34,4 +35,4 @@ Last updated: 2026-09-29. **Status: complete.**
 
 - `legacy/` holds the original scaffold. It is git-ignored and safe to delete.
 - The project is not a git repository yet. Run `git init`, commit, and push to GitHub to enable CI.
-- Dev database: Docker on port 5433 (a local PostgreSQL 18 already uses 5432).
+- Dev database: Docker on port 5434 (a local PostgreSQL 18 uses 5432 and another project's container uses 5433).

@@ -3,15 +3,21 @@ import { useId, type InputHTMLAttributes, type ReactNode, type Ref, type SelectH
 import { cn } from '@/lib/cn';
 
 const controlBase =
-  'w-full rounded-lg border bg-surface text-sm text-fg placeholder:text-fg-subtle transition-colors ' +
+  'rounded-lg border bg-surface text-sm text-fg placeholder:text-fg-subtle transition-colors ' +
   'focus:outline-none focus:ring-3 focus:ring-[var(--ring)] focus:border-primary disabled:bg-muted disabled:text-fg-muted';
+
+/**
+ * Controls are full-width unless the caller sets a width (`w-auto`, `sm:w-72`…).
+ * `cn` only joins classes, so a default `w-full` would always beat the caller's.
+ */
+const controlWidth = (className?: string) => (className && /(^|\s)w-/.test(className) ? undefined : 'w-full');
 
 const controlBorder = (invalid?: boolean) => (invalid ? 'border-danger' : 'border-border-strong/70');
 
 export type ControlProps = { invalid?: boolean };
 
 export function Input({ className, invalid, ref, ...props }: InputHTMLAttributes<HTMLInputElement> & ControlProps & { ref?: Ref<HTMLInputElement> }) {
-  return <input ref={ref} aria-invalid={invalid || undefined} className={cn(controlBase, controlBorder(invalid), 'h-9 px-3', className)} {...props} />;
+  return <input ref={ref} aria-invalid={invalid || undefined} className={cn(controlBase, controlWidth(className), controlBorder(invalid), 'h-9 px-3', className)} {...props} />;
 }
 
 export function Textarea({
@@ -24,7 +30,7 @@ export function Textarea({
     <textarea
       ref={ref}
       aria-invalid={invalid || undefined}
-      className={cn(controlBase, controlBorder(invalid), 'min-h-24 px-3 py-2 leading-relaxed', className)}
+      className={cn(controlBase, controlWidth(className), controlBorder(invalid), 'min-h-24 px-3 py-2 leading-relaxed', className)}
       {...props}
     />
   );
@@ -38,7 +44,7 @@ export function Select({
   ...props
 }: SelectHTMLAttributes<HTMLSelectElement> & ControlProps & { ref?: Ref<HTMLSelectElement> }) {
   return (
-    <select ref={ref} aria-invalid={invalid || undefined} className={cn(controlBase, controlBorder(invalid), 'h-9 px-2.5 pr-8', className)} {...props}>
+    <select ref={ref} aria-invalid={invalid || undefined} className={cn(controlBase, controlWidth(className), controlBorder(invalid), 'h-9 px-2.5 pr-8', className)} {...props}>
       {children}
     </select>
   );

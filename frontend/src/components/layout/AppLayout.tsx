@@ -1,6 +1,6 @@
 import { ChevronDown, LogOut, Menu, Moon, Sun, UserRound } from 'lucide-react';
 import { Suspense, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Avatar, Spinner } from '@/components/ui/Display';
 import { MenuItem, Popover } from '@/components/ui/Popover';
@@ -79,6 +79,7 @@ function UserMenu() {
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { pathname } = useLocation();
 
   return (
     <div className="min-h-screen">
@@ -108,7 +109,10 @@ export function AppLayout() {
               </div>
             }
           >
-            <Outlet />
+            {/* Keyed by path so each page fades up into place when you navigate. */}
+            <div key={pathname} className="animate-enter">
+              <Outlet />
+            </div>
           </Suspense>
         </main>
       </div>

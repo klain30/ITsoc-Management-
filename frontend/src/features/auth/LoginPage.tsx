@@ -46,7 +46,7 @@ export default function LoginPage() {
 
   return (
     <AuthLayout>
-      <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
+      <h1 className="font-display text-2xl font-bold tracking-tight">Sign in</h1>
       <p className="mt-1 text-sm text-fg-muted">Use the email address your organization invited.</p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-4" noValidate>

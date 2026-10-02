@@ -111,7 +111,7 @@ export default function MembersPage() {
                         </div>
                       </div>
                     </Td>
-                    <Td className="text-fg-muted tabular">{member.studentId}</Td>
+                    <Td className="whitespace-nowrap text-fg-muted tabular">{member.studentId}</Td>
                     <Td className="text-fg-muted">
                       <span className="block max-w-56 truncate">{member.course}</span>
                       <span className="text-xs text-fg-subtle">{yearLabel(member.yearLevel)}</span>

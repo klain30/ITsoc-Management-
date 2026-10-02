@@ -37,7 +37,7 @@ export const seedReferenceData = async (prisma: PrismaClient) => {
       id: 1,
       name: process.env.ORG_NAME ?? 'Information Technology Society',
       shortName: process.env.ORG_SHORT_NAME ?? 'ITSoc',
-      university: process.env.ORG_UNIVERSITY ?? 'College of Computing and Information Sciences',
+      university: process.env.ORG_UNIVERSITY ?? 'MMSU College of Computing and Information Sciences',
     },
   });
   for (const position of DEFAULT_POSITIONS) {

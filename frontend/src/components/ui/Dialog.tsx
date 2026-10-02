@@ -50,7 +50,7 @@ export function Dialog({
         if (event.target === ref.current) onClose();
       }}
       className={cn(
-        'm-auto w-[calc(100%-2rem)] rounded-2xl border border-border bg-surface p-0 text-fg shadow-pop backdrop:bg-transparent',
+        'm-auto w-[calc(100%-2rem)] rounded-2xl border border-border bg-surface p-0 text-fg shadow-pop',
         widths[size],
       )}
     >
@@ -58,7 +58,7 @@ export function Dialog({
         <div className="flex max-h-[85vh] flex-col">
           <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
             <div>
-              <h2 className="text-base font-semibold">{title}</h2>
+              <h2 className="font-display text-base font-bold">{title}</h2>
               {description ? <p className="mt-1 text-sm text-fg-muted">{description}</p> : null}
             </div>
             <button

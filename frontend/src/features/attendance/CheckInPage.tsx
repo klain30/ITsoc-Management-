@@ -54,11 +54,11 @@ export default function CheckInPage() {
         ) : state.kind === 'done' ? (
           <>
             <div
-              className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${state.result.status === 'LATE' ? 'bg-warning-soft text-warning' : 'bg-success-soft text-success'}`}
+              className={`mx-auto flex h-16 w-16 animate-pop items-center justify-center rounded-full ${state.result.status === 'LATE' ? 'bg-warning-soft text-warning' : 'bg-success-soft text-success'}`}
             >
               {state.result.status === 'LATE' ? <Clock size={32} aria-hidden /> : <CircleCheck size={32} aria-hidden />}
             </div>
-            <h1 className="mt-5 text-xl font-semibold">{state.result.status === 'LATE' ? 'Checked in (late)' : 'You’re checked in!'}</h1>
+            <h1 className="mt-5 font-display text-xl font-bold">{state.result.status === 'LATE' ? 'Checked in (late)' : 'You’re checked in!'}</h1>
             <p className="mt-2 text-sm text-fg-muted">
               {state.result.event.name} · {formatTime(state.result.checkedInAt)}
             </p>
@@ -68,10 +68,10 @@ export default function CheckInPage() {
           </>
         ) : (
           <>
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft text-danger">
+            <div className="mx-auto flex h-16 w-16 animate-pop items-center justify-center rounded-full bg-danger-soft text-danger">
               {state.code === 'CODE_EXPIRED' ? <QrCode size={30} aria-hidden /> : <CircleX size={32} aria-hidden />}
             </div>
-            <h1 className="mt-5 text-xl font-semibold">{state.code === 'CONFLICT' ? 'Already checked in' : 'Check-in failed'}</h1>
+            <h1 className="mt-5 font-display text-xl font-bold">{state.code === 'CONFLICT' ? 'Already checked in' : 'Check-in failed'}</h1>
             <p className="mt-2 text-sm text-fg">{state.message}</p>
             {HELP[state.code] ? <p className="mt-2 text-sm text-fg-muted">{HELP[state.code]}</p> : null}
             <ButtonLink to="/events" variant="secondary" className="mt-6">

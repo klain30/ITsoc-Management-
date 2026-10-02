@@ -15,7 +15,7 @@ export default function VerifyCertificatePage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-canvas px-4 py-12">
       <div className="mb-6 flex items-center gap-3">
-        <img src="/favicon.svg" alt="" className="h-9 w-9 rounded-lg" />
+        <img src="/itsoc-logo.png" alt="" className="h-10 w-10 rounded-full" />
         <p className="font-semibold text-fg">Certificate verification</p>
       </div>
       <Card className="w-full max-w-lg overflow-hidden">

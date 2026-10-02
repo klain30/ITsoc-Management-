@@ -20,7 +20,8 @@ const formatDate = (date: Date) =>
 
 const INK = '#0f172a';
 const MUTED = '#475569';
-const ACCENT = '#0f766e';
+// ITSoc seal ring blue.
+const ACCENT = '#0170bf';
 
 /** Renders a landscape A4 certificate with a QR code that links to the public verification page. */
 export const renderCertificatePdf = async (data: CertificatePdfData): Promise<Buffer> => {

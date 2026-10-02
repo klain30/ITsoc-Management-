@@ -43,7 +43,9 @@ export function Popover({
         <div
           className={cn(
             'absolute z-40 mt-2 rounded-xl border border-border bg-surface shadow-pop',
-            align === 'right' ? 'right-0' : 'left-0',
+            // Grows out of its trigger corner.
+            'transition-[opacity,transform] duration-150 ease-snappy starting:scale-95 starting:opacity-0',
+            align === 'right' ? 'right-0 origin-top-right' : 'left-0 origin-top-left',
             className,
           )}
         >
