@@ -88,5 +88,9 @@ export const sanitizeFileName = (name: string, ext: string) => {
   return `${base || 'file'}.${ext}`;
 };
 
-export const contentDisposition = (fileName: string, inline = false) =>
-  `${inline ? 'inline' : 'attachment'}; filename="${fileName.replace(/"/g, '')}"; filename*=UTF-8''${encodeURIComponent(fileName)}`;
+export const contentDisposition = (fileName: string, inline = false) => {
+  // Control characters (CR/LF etc.) would break the header; quotes would end the value early.
+  // eslint-disable-next-line no-control-regex -- matching control characters is the point
+  const safe = fileName.replace(/[\u0000-\u001f\u007f"\\]/g, '_');
+  return `${inline ? 'inline' : 'attachment'}; filename="${safe}"; filename*=UTF-8''${encodeURIComponent(safe)}`;
+};

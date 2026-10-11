@@ -17,6 +17,19 @@ import {
 
 const officerActor = (req: Request) => ({ ...actorContext(req), userId: getAuth(req).userId });
 
+/**
+ * Officer accounts (anything above MEMBER) can only be edited, or sent an
+ * invitation/reset link, by holders of roles:assign. Otherwise a secretary
+ * could change the president's email, or claim a pending invitation for an
+ * account that was just given an officer role.
+ */
+const assertCanManageAccount = async (req: Request, memberId: string) => {
+  if (hasPermission(req, PERMISSIONS.ROLES_ASSIGN) || memberId === getAuth(req).memberId) return;
+  if (await memberService.isOfficerAccount(memberId)) {
+    throw forbidden('Only the president can change another officer’s record or account.');
+  }
+};
+
 /** Mounted at /members. Every route requires authentication (see routes.ts). */
 export const memberRouter = Router();
 
@@ -38,6 +51,7 @@ memberRouter.get('/:id', async (req, res) => {
 
 memberRouter.patch('/:id', authorize(PERMISSIONS.MEMBERS_MANAGE), async (req, res) => {
   const input = updateMemberSchema.parse(req.body);
+  await assertCanManageAccount(req, param(req, 'id'));
   res.json({ data: await memberService.updateMember(param(req, 'id'), input, actorContext(req)) });
 });
 
@@ -47,6 +61,7 @@ memberRouter.delete('/:id', authorize(PERMISSIONS.ROLES_ASSIGN), async (req, res
 });
 
 memberRouter.post('/:id/access-link', authorize(PERMISSIONS.MEMBERS_MANAGE), async (req, res) => {
+  await assertCanManageAccount(req, param(req, 'id'));
   const link = await memberService.issueAccessLink(param(req, 'id'), officerActor(req), hasPermission(req, PERMISSIONS.ROLES_ASSIGN));
   res.status(201).json({ data: link });
 });

@@ -36,6 +36,37 @@ const typingSchema = z.object({ conversationId: id });
 
 const userIdOf = (socket: Socket) => socket.data.userId as string;
 
+/** Per-socket budgets per event: [max events, per window ms]. Signalling is chatty (ICE candidates), the rest is not. */
+const EVENT_LIMITS: Record<string, [number, number]> = {
+  'chat:typing': [10, 10_000],
+  'call:start': [5, 60_000],
+  'call:join': [10, 60_000],
+  'call:decline': [10, 60_000],
+  'call:leave': [20, 60_000],
+  'call:signal': [300, 10_000],
+};
+
+/** How often an open socket re-checks that its account is still active and its session still valid. */
+const REVALIDATE_MS = 60_000;
+
+const createEventLimiter = () => {
+  const hits = new Map<string, number[]>();
+  return (event: string) => {
+    const limit = EVENT_LIMITS[event];
+    if (!limit) return true;
+    const [max, windowMs] = limit;
+    const now = Date.now();
+    const recent = (hits.get(event) ?? []).filter((at) => now - at < windowMs);
+    if (recent.length >= max) {
+      hits.set(event, recent);
+      return false;
+    }
+    recent.push(now);
+    hits.set(event, recent);
+    return true;
+  };
+};
+
 /** Everyone who shares at least one conversation with the user (for presence updates). */
 const chatPartners = async (userId: string) => {
   const rows = await prisma.conversationParticipant.findMany({
@@ -131,6 +162,7 @@ export const attachRealtime = (httpServer: HttpServer) => {
       if (!user || user.status !== 'ACTIVE') throw new Error('inactive');
       if (user.passwordChangedAt && claims.iat < Math.floor(user.passwordChangedAt.getTime() / 1000)) throw new Error('revoked');
       socket.data.userId = user.id;
+      socket.data.issuedAt = claims.iat;
       next();
     } catch (error) {
       const expired = error instanceof AppError && error.code === 'TOKEN_EXPIRED';
@@ -140,6 +172,30 @@ export const attachRealtime = (httpServer: HttpServer) => {
 
   io.on('connection', (socket) => {
     const userId = userIdOf(socket);
+
+    // Drop events over budget instead of letting one socket flood the server or other users.
+    const allow = createEventLimiter();
+    socket.use(([event, ...rest], next) => {
+      if (allow(event)) return next();
+      const ack = rest.at(-1);
+      if (typeof ack === 'function') (ack as Ack)({ ok: false, error: 'Too many requests. Please slow down.' });
+    });
+
+    // A long-lived socket must not outlive a disabled account or a password change.
+    const revalidate = setInterval(() => {
+      void prisma.user
+        .findUnique({ where: { id: userId }, select: { status: true, passwordChangedAt: true } })
+        .then((user) => {
+          const revoked =
+            !user ||
+            user.status !== 'ACTIVE' ||
+            (user.passwordChangedAt && (socket.data.issuedAt as number) < Math.floor(user.passwordChangedAt.getTime() / 1000));
+          if (revoked) socket.disconnect(true);
+        })
+        .catch((error: unknown) => logger.error({ err: error }, 'socket revalidation failed'));
+    }, REVALIDATE_MS);
+    revalidate.unref();
+
     const wasOnline = isUserOnline(userId);
     void socket.join(userRoom(userId));
     if (!wasOnline) {
@@ -249,6 +305,7 @@ export const attachRealtime = (httpServer: HttpServer) => {
     );
 
     socket.on('disconnect', () => {
+      clearInterval(revalidate);
       void (async () => {
         for (const call of callsWithSocket(socket.id)) await leaveCall(io, call, userId, socket.id);
         if (!isUserOnline(userId)) emitToUsers(await chatPartners(userId), 'presence:update', { userId, online: false });

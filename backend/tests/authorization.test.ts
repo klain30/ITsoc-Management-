@@ -69,6 +69,23 @@ describe('role-based authorization (enforced by the API, not the UI)', () => {
     expect(res.status).toBe(403);
   });
 
+  it('only the president can edit another officer or send them an account link', async () => {
+    const president = await createUser('PRESIDENT');
+    const secretary = await createUser('SECRETARY');
+    const treasurer = await createUser('TREASURER');
+    const member = await createUser('MEMBER');
+
+    const hijack = await api().patch(`/api/v1/members/${president.memberId}`).set(auth(secretary)).send({ email: 'attacker@test.local' });
+    expect(hijack.status).toBe(403);
+    // A pending officer invitation cannot be re-issued (and claimed) by a lower officer.
+    await prisma.user.update({ where: { id: treasurer.userId }, data: { status: 'INVITED' } });
+    expect((await api().post(`/api/v1/members/${treasurer.memberId}/access-link`).set(auth(secretary))).status).toBe(403);
+
+    // Regular members' records are still the secretary's job, and the president can edit officers.
+    expect((await api().patch(`/api/v1/members/${member.memberId}`).set(auth(secretary)).send({ section: 'B' })).status).toBe(200);
+    expect((await api().patch(`/api/v1/members/${secretary.memberId}`).set(auth(president)).send({ section: 'A' })).status).toBe(200);
+  });
+
   it('members can view their own profile but not someone else’s', async () => {
     const a = await createUser();
     const b = await createUser();

@@ -74,3 +74,16 @@ export const apiRateLimit = rateLimit({
   keyGenerator: ip,
   message: tooMany('Too many requests. Please try again shortly.'),
 });
+
+/**
+ * Chat writes per signed-in user (sending messages, creating groups): stops one
+ * account from flooding conversations. Mounted after authenticate(), so req.auth is set.
+ */
+export const chatWriteRateLimit = rateLimit({
+  windowMs: 10 * 1000,
+  limit: env.isTest ? 1000 : 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  keyGenerator: (req) => `user:${req.auth?.userId ?? ip(req)}`,
+  message: tooMany('You are sending messages too quickly. Please wait a moment.'),
+});

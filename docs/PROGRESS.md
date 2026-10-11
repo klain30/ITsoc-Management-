@@ -18,11 +18,21 @@ Last updated: 2026-10-03. **Status: complete.**
 | Check | Result |
 |---|---|
 | Backend lint, typecheck, build | Clean |
-| Backend integration tests (`npm test`) | 53 passed (real PostgreSQL), including 5 chat tests |
+| Backend integration tests (`npm test`) | 54 passed (real PostgreSQL), including 5 chat tests |
 | Frontend lint (warnings fail), typecheck, build | Clean |
 | Frontend unit tests | 4 passed |
 | Browser smoke test (headless Edge) | All 6 demo roles signed in, visited every page they can access plus the event, member, budget, and expense detail pages, and signed out. The member role was refused on officer pages. The public verification page works. No runtime errors, no API 5xx, no error screens. |
 | Production stack (`docker-compose.prod.yml`) | Migrations applied, bootstrap ran, and the first president was activated via the invitation link through nginx. Security headers and CSP are present, and the browser showed no CSP violations. The session survives a reload, and the audit log records the real client IP. |
+
+## Security audit (2026-10-11)
+
+Checked: SQL injection (all raw SQL is tagged-template parameterized via Prisma), XSS (React escapes all text; no `dangerouslySetInnerHTML`; uploads are magic-byte checked PDF/images only), IDOR (object-level checks on certificates, documents, members, notifications, chat), secrets (no real secrets tracked in git), headers (helmet with `default-src 'none'` on the API, CSP and nosniff in nginx, CORS allow-list), cookies (refresh cookie is httpOnly, SameSite=Strict, path-scoped, Secure in production), CSRF (API auth is a bearer header; the cookie-based /auth routes also require `X-Requested-With`), passwords (bcrypt, 12 rounds), and `npm audit` (0 vulnerabilities in both apps).
+
+Fixed across the system: officers without roles:assign can no longer edit another officer's record (e.g. change the president's email) or issue an invitation/reset link for an officer account (which let a lower officer claim a pending officer invitation); passwords are capped at 72 bytes (bcrypt's real limit); download file names are stripped of control characters; nginx sends HSTS.
+
+Fixed in the messenger: per-user rate limit on chat writes (20 per 10 s), per-socket limits on realtime events, and open sockets re-checking every minute that the account is still active and the password has not changed.
+
+Not applicable: OAuth2 state validation (ITSoc has no OAuth sign-in). DOMPurify (nothing renders user HTML). Open: MFA for officer accounts.
 
 ## Ideas for later (not required by the spec)
 

@@ -8,7 +8,9 @@ export const newPasswordSchema = z
   .min(10, 'Password must be at least 10 characters.')
   .max(72, 'Password must be at most 72 characters.')
   .regex(/[A-Za-z]/, 'Password must contain a letter.')
-  .regex(/\d/, 'Password must contain a number.');
+  .regex(/\d/, 'Password must contain a number.')
+  // bcrypt silently ignores bytes past 72; non-ASCII characters take 2–4 bytes each.
+  .refine((value) => Buffer.byteLength(value, 'utf8') <= 72, 'Password is too long.');
 
 export const loginSchema = z.object({
   email: emailSchema,

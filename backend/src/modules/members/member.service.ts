@@ -129,6 +129,12 @@ export const createMember = async (input: CreateMemberInput, actor: ActorContext
   });
 };
 
+/** True when the member's login account has an officer role. */
+export const isOfficerAccount = async (memberId: string) => {
+  const member = await prisma.member.findUnique({ where: { id: memberId }, select: { user: { select: { role: { select: { name: true } } } } } });
+  return Boolean(member?.user && member.user.role.name !== 'MEMBER');
+};
+
 export const updateMember = async (id: string, input: UpdateMemberInput, actor: ActorContext) => {
   const before = await prisma.member.findUnique({ where: { id } });
   if (!before) throw notFound('Member');

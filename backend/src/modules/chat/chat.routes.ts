@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { searchSchema } from '../../common/pagination.js';
 import { getAuth, param } from '../../common/request.js';
+import { chatWriteRateLimit } from '../../middleware/rate-limit.js';
 import * as chatService from './chat.service.js';
 
 const id = z.string().trim().min(1).max(64);
@@ -39,12 +40,12 @@ chatRouter.get('/conversations', async (req, res) => {
   res.json({ data: await chatService.listConversations(getAuth(req).userId) });
 });
 
-chatRouter.post('/conversations/direct', async (req, res) => {
+chatRouter.post('/conversations/direct', chatWriteRateLimit, async (req, res) => {
   const { userId } = directSchema.parse(req.body);
   res.json({ data: await chatService.openDirect(getAuth(req), userId) });
 });
 
-chatRouter.post('/conversations/group', async (req, res) => {
+chatRouter.post('/conversations/group', chatWriteRateLimit, async (req, res) => {
   res.status(201).json({ data: await chatService.createGroup(getAuth(req), groupSchema.parse(req.body)) });
 });
 
@@ -52,12 +53,12 @@ chatRouter.get('/conversations/:id', async (req, res) => {
   res.json({ data: await chatService.getConversation(getAuth(req).userId, param(req, 'id')) });
 });
 
-chatRouter.patch('/conversations/:id', async (req, res) => {
+chatRouter.patch('/conversations/:id', chatWriteRateLimit, async (req, res) => {
   const { title: newTitle } = renameSchema.parse(req.body);
   res.json({ data: await chatService.renameGroup(getAuth(req), param(req, 'id'), newTitle) });
 });
 
-chatRouter.post('/conversations/:id/participants', async (req, res) => {
+chatRouter.post('/conversations/:id/participants', chatWriteRateLimit, async (req, res) => {
   const body = addSchema.parse(req.body);
   res.json({ data: await chatService.addParticipants(getAuth(req), param(req, 'id'), body.userIds) });
 });
@@ -71,7 +72,7 @@ chatRouter.get('/conversations/:id/messages', async (req, res) => {
   res.json(await chatService.listMessages(getAuth(req).userId, param(req, 'id'), historySchema.parse(req.query)));
 });
 
-chatRouter.post('/conversations/:id/messages', async (req, res) => {
+chatRouter.post('/conversations/:id/messages', chatWriteRateLimit, async (req, res) => {
   const { body } = messageSchema.parse(req.body);
   res.status(201).json({ data: await chatService.sendMessage(getAuth(req).userId, param(req, 'id'), body) });
 });
