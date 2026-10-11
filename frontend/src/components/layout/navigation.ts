@@ -4,6 +4,7 @@ import {
   ChartColumn,
   FileText,
   LayoutDashboard,
+  MessageCircle,
   Megaphone,
   ScrollText,
   Settings,
@@ -15,7 +16,7 @@ import {
 
 import type { Permission } from '@/types/api';
 
-export type NavItem = { label: string; to: string; icon: LucideIcon; anyOf?: Permission[] };
+export type NavItem = { label: string; to: string; icon: LucideIcon; anyOf?: Permission[]; badge?: 'messages' };
 export type NavSection = { title?: string; items: NavItem[] };
 
 /** Items without `anyOf` are visible to every signed-in user. */
@@ -23,6 +24,7 @@ export const NAVIGATION: NavSection[] = [
   {
     items: [
       { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+      { label: 'Messages', to: '/messages', icon: MessageCircle, badge: 'messages' },
       { label: 'Events', to: '/events', icon: CalendarDays },
       { label: 'Announcements', to: '/announcements', icon: Megaphone },
       { label: 'Documents', to: '/documents', icon: FileText },

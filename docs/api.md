@@ -159,6 +159,32 @@ There is no `DELETE` for expenses on purpose.
 | PATCH | `/notifications/:id/read` | — | Your own notifications only |
 | PATCH | `/notifications/read-all` | — | |
 
+## Messenger (chat, calls, meetings)
+
+Every signed-in user can chat. Officers (anyone with members:read) can reach every active account; members can reach officers. Every conversation route returns 404 unless you are a current participant.
+
+| Method | Path | Access | Notes |
+|---|---|---|---|
+| GET | `/chat/contacts` | — | `?search`. People you can start a chat with, officers first. |
+| GET | `/chat/unread-count` | — | Unread messages across all your chats |
+| GET | `/chat/conversations` | — | Your chats, newest activity first, with participants, last message, `unreadCount` and `activeCall` |
+| POST | `/chat/conversations/direct` | — | `{ userId }`. Opens the one chat for that pair, creating it if needed. |
+| POST | `/chat/conversations/group` | — | `{ title, userIds }` |
+| GET | `/chat/conversations/:id` | participant | |
+| PATCH | `/chat/conversations/:id` | participant | `{ title }`. Groups only. |
+| POST | `/chat/conversations/:id/participants` | participant | `{ userIds }`. Groups only. |
+| POST | `/chat/conversations/:id/leave` | participant | Groups only |
+| GET | `/chat/conversations/:id/messages` | participant | `?before=<messageId>&limit=40`. Oldest first; `meta.hasMore`. |
+| POST | `/chat/conversations/:id/messages` | participant | `{ body }` (max 4000 characters) |
+| POST | `/chat/conversations/:id/read` | participant | Marks everything up to now as read |
+| DELETE | `/chat/messages/:id` | author | Soft delete; the message stays in place as "Message removed" |
+
+### Realtime socket
+
+Socket.IO at path `/api/socket.io`, authenticated with the access token in the handshake (`auth: { token }`). The server pushes `chat:message`, `chat:message-updated`, `chat:conversation`, `chat:read`, `chat:typing`, `presence:update`, and the call events below.
+
+Calls use WebRTC peer to peer (a mesh, best for 1:1 calls and meetings of up to about 6 people); the server only relays signalling and keeps live calls in memory. Client → server: `call:start { conversationId, media }`, `call:join { callId }`, `call:signal { callId, to, data }`, `call:decline`, `call:leave`. Server → client: `call:incoming`, `call:state`, `call:peer-joined`, `call:peer-left`, `call:signal`, `call:declined`, `call:ended`. When a call ends the server posts a summary message ("Video call · 4m 12s", "Missed voice call", "Meeting · 25m · 5 joined") into the chat.
+
 ## Dashboard, reports, audit
 
 | Method | Path | Access | Notes |

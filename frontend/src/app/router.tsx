@@ -19,6 +19,7 @@ const EventDetailPage = lazy(() => import('@/features/events/EventDetailPage'));
 const AnnouncementsPage = lazy(() => import('@/features/announcements/AnnouncementsPage'));
 const DocumentsPage = lazy(() => import('@/features/documents/DocumentsPage'));
 const CertificatesPage = lazy(() => import('@/features/certificates/CertificatesPage'));
+const MessagesPage = lazy(() => import('@/features/chat/MessagesPage'));
 const NotificationsPage = lazy(() => import('@/features/notifications/NotificationsPage'));
 const ProfilePage = lazy(() => import('@/features/profile/ProfilePage'));
 const MembersPage = lazy(() => import('@/features/members/MembersPage'));
@@ -77,6 +78,8 @@ export const router = createBrowserRouter([
           { path: 'announcements', element: <AnnouncementsPage /> },
           { path: 'documents', element: <DocumentsPage /> },
           { path: 'certificates', element: <CertificatesPage /> },
+          { path: 'messages', element: <MessagesPage /> },
+          { path: 'messages/:id', element: <MessagesPage /> },
           { path: 'notifications', element: <NotificationsPage /> },
           { path: 'profile', element: <ProfilePage /> },
           // Members can open their own record (the API allows it); others need members:read.

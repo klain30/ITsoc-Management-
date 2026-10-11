@@ -68,6 +68,9 @@ export const setAccessToken = (token: string | null) => {
   accessToken = token;
 };
 
+/** For the realtime socket handshake, which cannot use the axios interceptor. */
+export const getAccessToken = () => accessToken;
+
 export const onSessionExpired = (handler: () => void) => {
   sessionExpiredHandler = handler;
 };

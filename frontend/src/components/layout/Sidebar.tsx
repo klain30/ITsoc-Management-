@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 
 import { CircuitPattern } from '@/components/ui/CircuitPattern';
 import { useAuth } from '@/features/auth/useAuth';
+import { useTotalUnread } from '@/features/chat/api';
 import { getData } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import type { Organization } from '@/types/api';
@@ -25,6 +26,7 @@ export function Brand({ light = true }: { light?: boolean }) {
 
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { canAny } = useAuth();
+  const unreadMessages = useTotalUnread();
 
   const sections = NAVIGATION.map((section) => ({
     ...section,
@@ -83,7 +85,12 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                       }
                     >
                       <item.icon size={18} aria-hidden />
-                      {item.label}
+                      <span className="flex-1">{item.label}</span>
+                      {item.badge === 'messages' && unreadMessages > 0 ? (
+                        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[11px] font-semibold text-accent-fg tabular-nums">
+                          {unreadMessages > 99 ? '99+' : unreadMessages}
+                        </span>
+                      ) : null}
                     </NavLink>
                   </li>
                 ))}

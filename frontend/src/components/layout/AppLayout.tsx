@@ -1,11 +1,14 @@
-import { ChevronDown, LogOut, Menu, Moon, Sun, UserRound } from 'lucide-react';
+import { ChevronDown, LogOut, Menu, MessageCircle, Moon, Sun, UserRound } from 'lucide-react';
 import { Suspense, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Avatar, Spinner } from '@/components/ui/Display';
 import { MenuItem, Popover } from '@/components/ui/Popover';
 import { useToast } from '@/components/ui/Toast';
 import { useCurrentUser, useAuth } from '@/features/auth/useAuth';
+import { useTotalUnread } from '@/features/chat/api';
+import { CallProvider } from '@/features/chat/CallProvider';
+import { ChatRealtime } from '@/features/chat/ChatRealtime';
 import { NotificationBell } from '@/features/notifications/NotificationBell';
 import { ROLE_LABELS } from '@/lib/labels';
 import { useTheme } from '@/lib/theme';
@@ -77,11 +80,31 @@ function UserMenu() {
   );
 }
 
+function MessagesButton() {
+  const unread = useTotalUnread();
+  return (
+    <Link
+      to="/messages"
+      aria-label={unread ? `Messages, ${unread} unread` : 'Messages'}
+      className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg text-fg-muted hover:bg-muted hover:text-fg"
+    >
+      <MessageCircle size={18} aria-hidden />
+      {unread > 0 ? (
+        <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-fg tabular">
+          {unread > 9 ? '9+' : unread}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
 
   return (
+    <CallProvider>
+    <ChatRealtime />
     <div className="min-h-screen">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2">
         Skip to content
@@ -98,6 +121,7 @@ export function AppLayout() {
             <Menu size={20} aria-hidden />
           </button>
           <div className="flex-1" />
+          <MessagesButton />
           <NotificationBell />
           <UserMenu />
         </header>
@@ -117,5 +141,6 @@ export function AppLayout() {
         </main>
       </div>
     </div>
+    </CallProvider>
   );
 }

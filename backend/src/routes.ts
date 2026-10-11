@@ -5,6 +5,7 @@ import { announcementRouter } from './modules/announcements/announcement.routes.
 import { attendanceRouter, eventAttendanceRouter, sessionRouter } from './modules/attendance/attendance.routes.js';
 import { auditRouter } from './modules/audit/audit.routes.js';
 import authRouter from './modules/auth/auth.routes.js';
+import { chatRouter } from './modules/chat/chat.routes.js';
 import { certificateRouter, eventCertificateRouter, publicCertificateRouter } from './modules/certificates/certificate.routes.js';
 import { dashboardRouter, reportRouter } from './modules/dashboard/dashboard.routes.js';
 import { documentRouter } from './modules/documents/document.routes.js';
@@ -51,4 +52,5 @@ apiRouter.use('/receipts', receiptRouter);
 apiRouter.use('/documents', documentRouter);
 apiRouter.use('/announcements', announcementRouter);
 apiRouter.use('/notifications', notificationRouter);
+apiRouter.use('/chat', chatRouter);
 apiRouter.use('/audit-logs', auditRouter);

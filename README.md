@@ -1,6 +1,6 @@
 # ITSoc Management System
 
-A web platform that runs the day-to-day operations of a university student organization: members and officers, events, QR attendance, certificates, budgets and expenses, documents, announcements, notifications, reports, and a tamper-evident audit log.
+A web platform that runs the day-to-day operations of a university student organization: members and officers, chat and meetings, events, QR attendance, certificates, budgets and expenses, documents, announcements, notifications, reports, and a tamper-evident audit log.
 
 > **Status:** complete. The backend and frontend are both done, tested, containerised and covered by CI. See [docs/PROGRESS.md](docs/PROGRESS.md) for the verification record and ideas for later.
 
@@ -18,6 +18,7 @@ A web platform that runs the day-to-day operations of a university student organ
   - Whoever files an expense can't approve it.
   - Approval can't overspend a budget.
   - Expenses are never deleted, and their status history is append-only.
+- **Built-in messenger.** One-to-one and group chats with live delivery, typing indicators, online status and read receipts, plus voice/video calls and group meetings with screen sharing, all in the browser (Socket.IO + WebRTC).
 - **Rules the database enforces itself.** Triggers make the audit log append-only and lock finalized expenses. Unique constraints stop duplicate registrations and check-ins. Row locks prevent overbooking.
 - **Tested.**
   - 48 backend integration tests run against real PostgreSQL. They cover auth, permissions, concurrency, attendance, finance, audit, and certificates.
@@ -31,7 +32,7 @@ A web platform that runs the day-to-day operations of a university student organ
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, React Router, TanStack Query, Axios, React Hook Form, Zod |
 | Backend | Node.js, Express 5, TypeScript, Zod, Prisma 5, PostgreSQL 16 |
 | Security | bcrypt, JWT, helmet, CORS allow-list, express-rate-limit, file-type sniffing |
-| Other | pdfkit (certificates), qrcode, pino (logs), Vitest + Supertest, Docker, GitHub Actions |
+| Other | Socket.IO + WebRTC (chat, calls, meetings), pdfkit (certificates), qrcode, pino (logs), Vitest + Supertest, Docker, GitHub Actions |
 
 ## Getting started (development)
 
