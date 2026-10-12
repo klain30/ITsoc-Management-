@@ -26,7 +26,7 @@ const officerActor = (req: Request) => ({ ...actorContext(req), userId: getAuth(
 const assertCanManageAccount = async (req: Request, memberId: string) => {
   if (hasPermission(req, PERMISSIONS.ROLES_ASSIGN) || memberId === getAuth(req).memberId) return;
   if (await memberService.isOfficerAccount(memberId)) {
-    throw forbidden('Only the president can change another officer’s record or account.');
+    throw forbidden('Only the adviser or the president can change another officer’s record or account.');
   }
 };
 

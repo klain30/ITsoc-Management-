@@ -86,6 +86,44 @@ describe('role-based authorization (enforced by the API, not the UI)', () => {
     expect((await api().patch(`/api/v1/members/${secretary.memberId}`).set(auth(president)).send({ section: 'A' })).status).toBe(200);
   });
 
+  it('ITSoc’s assistant officers, P.I.O. and representatives get only their own duties', async () => {
+    const president = await createUser('PRESIDENT');
+    const asstTreasurer = await createUser('ASSISTANT_TREASURER');
+    const pio = await createUser('PIO');
+    const rep = await createUser('REPRESENTATIVE');
+
+    // The assistant treasurer records expenses but can never approve one.
+    const budget = await api().post('/api/v1/budgets').set(auth(asstTreasurer)).send({ name: 'Acquaintance Party', allocatedAmount: '5000' });
+    expect(budget.status).toBe(201);
+    const expense = await api()
+      .post('/api/v1/expenses')
+      .set(auth(asstTreasurer))
+      .send({ budgetId: budget.body.data.id, amount: '500', category: 'FOOD', description: 'Snacks', expenseDate: new Date().toISOString().slice(0, 10) });
+    expect(expense.status).toBe(201);
+    expect((await api().patch(`/api/v1/expenses/${expense.body.data.id}/approve`).set(auth(asstTreasurer)).send({})).status).toBe(403);
+    expect((await api().patch(`/api/v1/expenses/${expense.body.data.id}/approve`).set(auth(president)).send({})).status).toBe(200);
+
+    // The P.I.O. publishes announcements but has no access to finance.
+    expect((await api().post('/api/v1/announcements').set(auth(pio)).send({ title: 'General assembly', content: 'See you on Friday at the CCIS lobby.' })).status).toBe(201);
+    expect((await api().get('/api/v1/budgets').set(auth(pio))).status).toBe(403);
+
+    // Representatives can look up classmates but cannot change records.
+    expect((await api().get('/api/v1/members').set(auth(rep))).status).toBe(200);
+    expect((await api().post('/api/v1/events').set(auth(rep)).send({})).status).toBe(403);
+  });
+
+  it('the adviser is an administrator who can appoint and remove officers', async () => {
+    await createUser('PRESIDENT');
+    const adviser = await createUser('ADVISER');
+    const member = await createUser('MEMBER');
+    const officer = await createUser('SECRETARY');
+
+    expect((await api().patch(`/api/v1/members/${member.memberId}/role`).set(auth(adviser)).send({ role: 'TREASURER' })).status).toBe(200);
+    expect((await api().patch(`/api/v1/members/${officer.memberId}/role`).set(auth(adviser)).send({ role: 'MEMBER' })).status).toBe(200);
+    expect((await api().patch(`/api/v1/members/${officer.memberId}`).set(auth(adviser)).send({ section: 'C' })).status).toBe(200);
+    expect((await api().get('/api/v1/audit-logs').set(auth(adviser))).status).toBe(200);
+  });
+
   it('members can view their own profile but not someone else’s', async () => {
     const a = await createUser();
     const b = await createUser();

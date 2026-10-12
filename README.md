@@ -6,7 +6,7 @@ A web platform that runs the day-to-day operations of a university student organ
 
 ## Highlights
 
-- **Permissions enforced by the API.** 16 permission keys across 6 roles, stored in the database. Every route checks them. The frontend only hides what the API would refuse anyway.
+- **Permissions enforced by the API.** 16 permission keys across 11 roles, stored in the database. Every route checks them. The frontend only hides what the API would refuse anyway.
 - **Secure sessions.**
   - 15-minute access tokens kept in memory, with rotating httpOnly refresh cookies.
   - Reusing a stolen refresh token revokes every session from that login.
@@ -62,11 +62,16 @@ After `npm run db:seed`, each of these accounts uses the password `ItsocDemo2026
 
 | Email | Role |
 |---|---|
+| adviser@itsoc.test | Adviser (admin) |
 | president@itsoc.test | President |
 | vp@itsoc.test | Vice President |
 | secretary@itsoc.test | Secretary |
+| asst.secretary@itsoc.test | Assistant Secretary |
 | treasurer@itsoc.test | Treasurer |
+| asst.treasurer@itsoc.test | Assistant Treasurer |
 | auditor@itsoc.test | Auditor |
+| pio@itsoc.test | P.I.O. |
+| rep@itsoc.test | Section Representative |
 | member@itsoc.test | Member |
 
 The seed also creates 36 members, events in every status (one ongoing, ready for a QR demo), attendance records, issued certificates, three budgets including the ₱32,000 → ₱4,000 example from the spec, announcements, and notifications.

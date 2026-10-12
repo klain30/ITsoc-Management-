@@ -42,7 +42,7 @@ export const listPositions = async (includeInactive: boolean) => {
         select: {
           id: true,
           startDate: true,
-          member: { select: { id: true, firstName: true, lastName: true, studentId: true } },
+          member: { select: { id: true, firstName: true, lastName: true, studentId: true, yearLevel: true, section: true } },
         },
       },
     },
@@ -55,6 +55,8 @@ export const listPositions = async (includeInactive: boolean) => {
       memberId: assignment.member.id,
       name: `${assignment.member.firstName} ${assignment.member.lastName}`,
       studentId: assignment.member.studentId,
+      /** e.g. "1A" — what ITSoc uses to label section representatives. */
+      yearSection: assignment.member.section ? `${assignment.member.yearLevel}${assignment.member.section}` : null,
     })),
   }));
 };

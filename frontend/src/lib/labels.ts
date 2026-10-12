@@ -16,11 +16,16 @@ export type Tone = 'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'i
 type Labelled = { label: string; tone: Tone };
 
 export const ROLE_LABELS: Record<Role, string> = {
+  ADVISER: 'Adviser',
   PRESIDENT: 'President',
   VICE_PRESIDENT: 'Vice President',
   SECRETARY: 'Secretary',
+  ASSISTANT_SECRETARY: 'Assistant Secretary',
   TREASURER: 'Treasurer',
+  ASSISTANT_TREASURER: 'Assistant Treasurer',
   AUDITOR: 'Auditor',
+  PIO: 'P.I.O.',
+  REPRESENTATIVE: 'Representative',
   MEMBER: 'Member',
 };
 

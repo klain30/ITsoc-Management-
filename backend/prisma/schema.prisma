@@ -17,11 +17,16 @@ datasource db {
 // ─────────────────────────────────────────────────────────────
 
 enum RoleName {
+  ADVISER
   PRESIDENT
   VICE_PRESIDENT
   SECRETARY
+  ASSISTANT_SECRETARY
   TREASURER
+  ASSISTANT_TREASURER
   AUDITOR
+  PIO
+  REPRESENTATIVE
   MEMBER
 }
 

@@ -25,6 +25,13 @@ const dayFmt = new Intl.DateTimeFormat(LOCALE, { day: 'numeric', timeZone: TIME_
 
 const toDate = (value: string | Date) => (value instanceof Date ? value : new Date(value));
 
+/** Philippine academic year a date falls in (the year starts in August), e.g. "AY 2026–2027". */
+export const academicYear = (value: string | Date) => {
+  const date = toDate(value);
+  const start = date.getMonth() >= 7 ? date.getFullYear() : date.getFullYear() - 1;
+  return `AY ${start}–${start + 1}`;
+};
+
 export const formatDate = (value: string | Date | null | undefined) => (value ? dateFmt.format(toDate(value)) : '—');
 export const formatLongDate = (value: string | Date) => longDateFmt.format(toDate(value));
 export const formatTime = (value: string | Date) => timeFmt.format(toDate(value));

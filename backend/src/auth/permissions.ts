@@ -52,6 +52,26 @@ export const PERMISSION_DESCRIPTIONS: Record<Permission, string> = {
 const P = PERMISSIONS;
 
 export const ROLE_PERMISSIONS: Record<RoleName, Permission[]> = {
+  /**
+   * Faculty adviser: an administrator alongside the president. Can add and
+   * remove officers (roles:assign, positions:manage) and sees everything.
+   */
+  ADVISER: [
+    P.MEMBERS_READ,
+    P.MEMBERS_MANAGE,
+    P.POSITIONS_MANAGE,
+    P.ROLES_ASSIGN,
+    P.EVENTS_MANAGE,
+    P.ATTENDANCE_READ,
+    P.CERTIFICATES_ISSUE,
+    P.FINANCE_READ,
+    P.EXPENSES_APPROVE,
+    P.DOCUMENTS_READ,
+    P.DOCUMENTS_MANAGE,
+    P.ANNOUNCEMENTS_MANAGE,
+    P.REPORTS_READ,
+    P.AUDIT_READ,
+  ],
   PRESIDENT: [
     P.MEMBERS_READ,
     P.MEMBERS_MANAGE,
@@ -88,19 +108,51 @@ export const ROLE_PERMISSIONS: Record<RoleName, Permission[]> = {
     P.DOCUMENTS_MANAGE,
     P.ANNOUNCEMENTS_MANAGE,
   ],
+  /** Backs up the secretary on records, events and attendance; certificates stay with the secretary. */
+  ASSISTANT_SECRETARY: [
+    P.MEMBERS_READ,
+    P.MEMBERS_MANAGE,
+    P.EVENTS_MANAGE,
+    P.ATTENDANCE_READ,
+    P.ATTENDANCE_MANAGE,
+    P.DOCUMENTS_READ,
+    P.DOCUMENTS_MANAGE,
+  ],
   TREASURER: [P.MEMBERS_READ, P.FINANCE_READ, P.FINANCE_MANAGE, P.DOCUMENTS_READ],
+  /** Records expenses and receipts; approval stays with the president (expenses:approve). */
+  ASSISTANT_TREASURER: [P.MEMBERS_READ, P.FINANCE_READ, P.FINANCE_MANAGE, P.DOCUMENTS_READ],
   AUDITOR: [P.MEMBERS_READ, P.FINANCE_READ, P.DOCUMENTS_READ, P.AUDIT_READ],
+  /** Public Information Officer: runs announcements and keeps members informed about events. */
+  PIO: [P.MEMBERS_READ, P.ANNOUNCEMENTS_MANAGE, P.ATTENDANCE_READ, P.DOCUMENTS_READ],
+  /** Year/section representative: sees the member directory and attendance for their classmates. */
+  REPRESENTATIVE: [P.MEMBERS_READ, P.ATTENDANCE_READ],
   MEMBER: [],
 };
 
 export const ROLE_DESCRIPTIONS: Record<RoleName, string> = {
+  ADVISER: 'Faculty adviser; an administrator who appoints and removes officers and oversees all modules',
   PRESIDENT: 'Leads the organization; approves expenses and oversees all modules',
   VICE_PRESIDENT: 'Manages events and members; publishes announcements',
   SECRETARY: 'Keeps member, event, attendance and document records',
+  ASSISTANT_SECRETARY: 'Helps the secretary with member, event, attendance and document records',
   TREASURER: 'Manages budgets, expenses, receipts and reimbursements',
+  ASSISTANT_TREASURER: 'Helps the treasurer record expenses and receipts; cannot approve expenses',
   AUDITOR: 'Reviews financial records; read-only access to finance',
+  PIO: 'Public Information Officer; publishes announcements and keeps members informed',
+  REPRESENTATIVE: 'Represents a year level or section; can view members and attendance',
   MEMBER: 'Regular organization member',
 };
 
 /** Roles that count as officers (anything above a regular member). */
-export const OFFICER_ROLES: RoleName[] = ['PRESIDENT', 'VICE_PRESIDENT', 'SECRETARY', 'TREASURER', 'AUDITOR'];
+export const OFFICER_ROLES: RoleName[] = [
+  'ADVISER',
+  'PRESIDENT',
+  'VICE_PRESIDENT',
+  'SECRETARY',
+  'ASSISTANT_SECRETARY',
+  'TREASURER',
+  'ASSISTANT_TREASURER',
+  'AUDITOR',
+  'PIO',
+  'REPRESENTATIVE',
+];

@@ -17,15 +17,20 @@ import type { PrismaClient } from '@prisma/client';
 
 import { syncRbac } from '../auth/rbac-sync.js';
 
+/** ITSoc's officer line-up (AY 2026–2027). Officers can add or retire titles in the app. */
 const DEFAULT_POSITIONS = [
+  { name: 'Adviser', description: 'Faculty adviser of the organization', sortOrder: 5 },
   { name: 'President', sortOrder: 10 },
   { name: 'Vice President', sortOrder: 20 },
   { name: 'Secretary', sortOrder: 30 },
+  { name: 'Assistant Secretary', sortOrder: 35 },
   { name: 'Treasurer', sortOrder: 40 },
+  { name: 'Assistant Treasurer', sortOrder: 45 },
   { name: 'Auditor', sortOrder: 50 },
-  { name: 'Public Relations Officer', sortOrder: 60 },
-  { name: 'Committee Head', sortOrder: 70 },
-  { name: 'Committee Member', sortOrder: 80 },
+  { name: 'P.I.O.', description: 'Public Information Officer', sortOrder: 60 },
+  { name: 'Section Representative', description: 'One per year level and section (1A, 2A, 3A, 4A, 4C…)', sortOrder: 70 },
+  { name: 'Committee Head', sortOrder: 80 },
+  { name: 'Committee Member', sortOrder: 90 },
 ];
 
 export const seedReferenceData = async (prisma: PrismaClient) => {

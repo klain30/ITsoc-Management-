@@ -3,7 +3,18 @@
  * feature agrees on them; update alongside the backend DTOs.
  */
 
-export type Role = 'PRESIDENT' | 'VICE_PRESIDENT' | 'SECRETARY' | 'TREASURER' | 'AUDITOR' | 'MEMBER';
+export type Role =
+  | 'ADVISER'
+  | 'PRESIDENT'
+  | 'VICE_PRESIDENT'
+  | 'SECRETARY'
+  | 'ASSISTANT_SECRETARY'
+  | 'TREASURER'
+  | 'ASSISTANT_TREASURER'
+  | 'AUDITOR'
+  | 'PIO'
+  | 'REPRESENTATIVE'
+  | 'MEMBER';
 
 export type Permission =
   | 'members:read'
@@ -140,7 +151,7 @@ export type Position = {
   description: string | null;
   sortOrder: number;
   isActive: boolean;
-  holders: { assignmentId: string; since: ISODate; memberId: string; name: string; studentId: string }[];
+  holders: { assignmentId: string; since: ISODate; memberId: string; name: string; studentId: string; yearSection: string | null }[];
 };
 
 export type RoleMatrix = {

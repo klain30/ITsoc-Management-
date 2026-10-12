@@ -18,7 +18,7 @@ const schema = z.object({
 });
 type Values = z.infer<typeof schema>;
 
-const DEMO_ACCOUNTS = ['president', 'vp', 'secretary', 'treasurer', 'auditor', 'member'];
+const DEMO_ACCOUNTS = ['adviser', 'president', 'vp', 'secretary', 'asst.secretary', 'treasurer', 'asst.treasurer', 'auditor', 'pio', 'rep', 'member'];
 const DEMO_PASSWORD = 'ItsocDemo2026!';
 
 export default function LoginPage() {

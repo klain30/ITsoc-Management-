@@ -201,7 +201,7 @@ export const issueAccessLink = async (memberId: string, actor: ActorContext & { 
 
   const type = user.status === 'INVITED' ? 'INVITATION' : 'PASSWORD_RESET';
   if (type === 'PASSWORD_RESET' && !canResetPasswords) {
-    throw forbidden('Only the president can issue password-reset links for active accounts.');
+    throw forbidden('Only the adviser or the president can issue password-reset links for active accounts.');
   }
 
   return prisma.$transaction(async (tx) => {

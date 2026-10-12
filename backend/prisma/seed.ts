@@ -423,8 +423,62 @@ const seedDemoData = async () => {
   });
 
   console.log(`Demo data created. Sign in with any of these (password: ${DEMO_PASSWORD}):`);
-  for (const email of ['president', 'vp', 'secretary', 'treasurer', 'auditor', 'member']) {
+  for (const email of ['adviser', 'president', 'vp', 'secretary', 'asst.secretary', 'treasurer', 'asst.treasurer', 'auditor', 'pio', 'rep', 'member']) {
     console.log(`  ${email}@itsoc.test`);
+  }
+};
+
+/**
+ * ITSoc's extra officer roles (assistant secretary/treasurer, P.I.O., section
+ * representative). Separate from seedDemoData and keyed by email so it also
+ * fills in databases that were seeded before these roles existed.
+ */
+const EXTRA_OFFICERS = [
+  { email: 'asst.secretary@itsoc.test', firstName: 'Bea', lastName: 'Ramos', role: 'ASSISTANT_SECRETARY', position: 'Assistant Secretary', yearLevel: 2, section: 'A' },
+  { email: 'asst.treasurer@itsoc.test', firstName: 'Carlo', lastName: 'Mendoza', role: 'ASSISTANT_TREASURER', position: 'Assistant Treasurer', yearLevel: 2, section: 'B' },
+  { email: 'pio@itsoc.test', firstName: 'Dana', lastName: 'Reyes', role: 'PIO', position: 'P.I.O.', yearLevel: 3, section: 'A' },
+  { email: 'rep@itsoc.test', firstName: 'Enzo', lastName: 'Garcia', role: 'REPRESENTATIVE', position: 'Section Representative', yearLevel: 1, section: 'A' },
+  // The organization's faculty adviser (an administrator, not a student).
+  {
+    email: 'adviser@itsoc.test',
+    firstName: 'Gerald Mc Klein',
+    middleName: 'G.',
+    lastName: 'Agustin',
+    role: 'ADVISER',
+    position: 'Adviser',
+    yearLevel: 4,
+    section: null,
+    course: 'Faculty Adviser',
+  },
+] as const;
+
+const seedExtraOfficers = async () => {
+  const roles = Object.fromEntries((await prisma.role.findMany()).map((role) => [role.name, role.id])) as Record<RoleName, string>;
+  const positions = Object.fromEntries((await prisma.position.findMany()).map((p) => [p.name, p.id]));
+  const president = await prisma.user.findFirst({ where: { role: { name: 'PRESIDENT' }, status: 'ACTIVE' }, select: { id: true } });
+  if (!president) return;
+  const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 12);
+  const termStart = dateOnly(new Date(Date.now() - 60 * 24 * 60 * 60 * 1000));
+  let seq = 9000;
+  for (const officer of EXTRA_OFFICERS) {
+    seq += 1;
+    if (await prisma.member.findUnique({ where: { email: officer.email } })) continue;
+    const member = await prisma.member.create({
+      data: {
+        studentId: `2024-${seq}`,
+        firstName: officer.firstName,
+        middleName: 'middleName' in officer ? officer.middleName : null,
+        lastName: officer.lastName,
+        email: officer.email,
+        course: 'course' in officer ? officer.course : 'BS Information Technology',
+        yearLevel: officer.yearLevel,
+        section: officer.section,
+        user: { create: { roleId: roles[officer.role], status: 'ACTIVE', passwordHash } },
+      },
+    });
+    await prisma.positionAssignment.create({
+      data: { memberId: member.id, positionId: positions[officer.position], startDate: termStart, assignedById: president.id },
+    });
   }
 };
 
@@ -432,7 +486,10 @@ const main = async () => {
   await seedReferenceData(prisma);
   console.log('Reference data synced (roles, permissions, organization, positions).');
   const demo = process.env.SEED_DEMO ?? (process.env.NODE_ENV === 'production' ? '0' : '1');
-  if (demo === '1') await seedDemoData();
+  if (demo === '1') {
+    await seedDemoData();
+    await seedExtraOfficers();
+  }
 };
 
 main()

@@ -11,7 +11,7 @@ import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/features/auth/useAuth';
 import { MemberPicker } from '@/features/members/MemberPicker';
 import { getData, patchData, postData } from '@/lib/api';
-import { formatDate, todayInput } from '@/lib/format';
+import { academicYear, formatDate, todayInput } from '@/lib/format';
 import type { Position } from '@/types/api';
 
 const usePositions = (includeInactive: boolean) =>
@@ -79,7 +79,10 @@ export default function OfficersPage() {
                       <Link to={`/members/${h.memberId}`} className="font-medium hover:underline">
                         {h.name}
                       </Link>
-                      <span className="block text-xs text-fg-subtle">since {formatDate(h.since)}</span>
+                      <span className="block text-xs text-fg-subtle">
+                        {h.yearSection ? `${h.yearSection} · ` : ''}
+                        {academicYear(h.since)} · since {formatDate(h.since)}
+                      </span>
                     </span>
                     {canManage ? (
                       <Button size="sm" variant="ghost" onClick={() => setEnding({ assignmentId: h.assignmentId, name: h.name, position: position.name })}>
